@@ -192,7 +192,7 @@ if rank == 0:
 	bin_freq_prob = sorted(bin_freq_prob, key=lambda x: x[-1], reverse=True)
 	
 	# add the single-cell bins to the results
-	sc_bins_freq_def = [(bid, freq_map[bid], -1.0) for bid in sc_bins]
+	sc_bins_freq_def = [(bid, freq_map.get(bid, 0.0), -1.0) for bid in sc_bins]
 	bin_freq_prob = sc_bins_freq_def + bin_freq_prob
 	
 	# create th SPARTA output table and the imputed bins bed file
