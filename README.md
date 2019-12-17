@@ -26,13 +26,39 @@ Finally activate the environment before running the algorithm.
 `conda activate sparta`
 
 
-## Download the repository and test Sparta
+## Clone repository and display command line arguments
 
 ```
-
+git clone https://github.com/salbrec/SPARTA.git
 cd SPARTA/
+
+python SPART.py --help
+
+usage: SPARTA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
+                 [--genome GENOME] [--binsize BINSIZE]
+                 [--estimators ESTIMATORS] [--simulate]
+
+SPARTA: SPARse peaks impuTAtion
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --bed BED, -b BED     Sparse single-cell input dataset path
+  --targets TARGETS, -t TARGETS
+                        Target(s) defining the bulk reference data (ususally
+                        the on used in scChIP). When multiple targets
+                        provided, separate by "+"
+  --outdir OUTDIR, -o OUTDIR
+                        Output directory. Default: ./
+  --genome GENOME, -g GENOME
+                        Genome assembly
+  --binsize BINSIZE, -bs BINSIZE
+                        Size of the bins (genomic regions)
+  --estimators ESTIMATORS, -e ESTIMATORS
+                        Number of trees in Random Forest
+  --simulate            Impute only 100 bins for testing the software
+
+
 ```
-After, run sparta providing the following parameters:  
 
 
 
