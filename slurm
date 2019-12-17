@@ -14,4 +14,5 @@
 module load mpi/OpenMPI/3.1.4-GCC-8.3.0
 
 # running the example provided in the repositiory
-srun --unbuffered -n 256 --mpi=pmi2 python sparta.py ./sc_examples/H3K4me3_hg38_5kb/BC9244609.bed H3K4me3 hg38 5kb RFC-100
+srun --unbuffered -n 256 --mpi=pmi2 python SPARTA.py --bed ./sc_examples/H3K4me3_hg38_5kb/BC9244609.bed --targets H3K4me3
+
