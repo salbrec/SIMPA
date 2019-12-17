@@ -77,38 +77,15 @@ Given an example from H3K27me3 in another resolution, the call could look like t
 
 ## Runtime and MPI
 
-Due to the amount of machine learning models to be trained SPARTA can take up to 20h for the imputation of one cell for H3K4me3 in 5kb resolution. Though, SPARTA can be applied using MPI which we highly recommend. An example `slurm` script is provided that allows to run SPARTA using many cores from several compute nodes.  
+Due to the amount of machine learning models to be trained, SPARTA can take up to 20h for the imputation of one cell in for example 5kb resolution for H3K4me3. Though, SPARTA is an MPI implementation that automatically distributes the computationally part to multiple cores on a system providing an Open MPI installation. An example `slurm` script is provided that allows to run SPARTA using many cores from several compute nodes after specifying the users account and the partition. 
+
+```
+sbatch slurm
+```
+Access to cloud computing or a high performance cluster will make it feasible to apply SPARTA to many single cells.
 
 ## SPARTA output
 
 Blaaa
 
-#### Option 1 command line:
-
-- imputation of a single cell from the command line 289 bins in 1 single cell BC9244609.bed:  
-
-```
-python sparta.py sc_examples/H3K4me3_hg38_5kb/BC9244609.bed H3K4me3 hg38 5kb RFC-100 -test
-```
-
-Check the `tes_out` folder where you will have the output of sparta corresponding to two files of the same size. One file in `.bed` format can be used for enrichment analysis, the second file in `.sparta` format has the information about:  
-
-- the bin ID corresponding to the scChIP-seq region in the reference ENCODE portal    
-- chr  
-- start  
-- end  
-- frequency of the bin in the reference ENCODE dataset for the mark investigated (H3K4me3 in this case)
-- imputed probability  
-
-Please note that in `.sparta` format file, the bin already present in the single cell ChIP-seq file will have in the 6th column -1 (because imputation is not needed for that region). Furthermore in this simple test in the command line we will try to impute only 43 regions.    
-
-#### Option 2 cluster: 
-
-If you want to run sparta for all the regions in the ENCODE reference of approximately ~300000 regions we propose the `slurm` script that can run in a slurm scheduler. For this run:  
-
-```
-sbatch slurm
-```
-Within the slurm script the option `-test` is deactivated and all the bins present in the training test will be tested by SPARTA for classification.  
-
-Sparta in this case will output the top ~30000 regions with the best imputed probability. We selected ~30000 regions because for the mark H3K4me3 is the average number in a bulk experiment.  
+ 
