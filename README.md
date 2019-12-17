@@ -2,6 +2,7 @@
 
 SPARTA is a method for SPARse peaks impuTAtion that leverages predictive information within bulk ENCODE data to impute missing regions for a histone mark or transcription factor of interest. SPARTA is tested on a recent dataset (Grosselin et al. 2019) to impute DNA regions of H3K4me3 and H3K27me3 mark in B-cell and T-cell.
 
+<img src="workflow/SPARTA.png" width="800">
 
 ## Installation with ANACONDA  
 
