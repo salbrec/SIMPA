@@ -65,16 +65,23 @@ optional arguments:
 Applying SPARTA on a bed file that contains the sparse input from an individual single cell is as simple as this:
 
 ```
-python SPARTA.py -b ./sc_examples/H3K4me3_hg38_5kb/BC9244609.bed -t H3K4me3
+python SPARTA.py -b ./scExamples/H3K4me3_hg38_5kb/BC9244609.bed -t H3K4me3
 ```
 In order to test whether everyhing is running smoothly you can add `--simulate` that restricts SPARTA to train machine learning models for only 100 bins.
 
+## SPARTA used with some arguments
 
+Given an example from H3K27me3 in another resolution, the call could look like this, expecting the output to be stored in `/BC20160289/`.
 
+`python SPARTA.py -b ./scExamples/H3K27me3_hg38_50kb/BC20160289.bed -t H3K27me3 -bs 50kb -o ./BC20160289/`
 
+## Runtime and MPI
 
+Due to the amount of machine learning models to be trained SPARTA can take up to 20h for the imputation of one cell for H3K4me3 in 5kb resolution. Though, SPARTA can be applied using MPI which we highly recommend. An example `slurm` script is provided that allows to run SPARTA using many cores from several compute nodes.  
 
+## SPARTA output
 
+Blaaa
 
 #### Option 1 command line:
 
