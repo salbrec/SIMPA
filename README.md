@@ -60,6 +60,20 @@ optional arguments:
 
 ```
 
+## Running SPARTA
+
+Applying SPARTA on a bed file that contains the sparse input from an individual single cell is as simple as this:
+
+```
+python SPARTA.py --bed ./sc_examples/H3K4me3_hg38_5kb/BC9244609.bed --targets H3K4me3
+```
+In order to test whether everyhing is running smoothly you can add `--simulate` that restricts SPARTA to train machine learning models for only 100 bins.
+
+
+
+
+
+
 
 
 #### Option 1 command line:
