@@ -24,8 +24,8 @@ parser.add_argument('--bed', '-b', type=str, required=True, help='Sparse single-
 parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the bulk reference data 
 					(ususally the on used in scChIP). When multiple targets provided, separate by "+"''')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: ./')
-parser.add_argument('--genome', '-g', type=str, default='hg38', help='Genome assembly')
-parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of the bins (genomic regions)')
+parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38'], help='Genome assembly')
+parser.add_argument('--binsize', '-bs', type=str, default='5kb', choices=['5kb','50kb'], help='Size of the bins (genomic regions)')
 parser.add_argument('--estimators', '-e', type=int, default=100, help='Number of trees in Random Forest')
 parser.add_argument('--simulate', action='store_true', help='Impute only 100 bins for testing the software')
 
