@@ -34,8 +34,9 @@ cd SPARTA/
 
 python SPART.py --help
 
+
 usage: SPARTA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
-                 [--genome GENOME] [--binsize BINSIZE]
+                 [--genome {hg38}] [--binsize {5kb,50kb}]
                  [--estimators ESTIMATORS] [--simulate]
 
 SPARTA: SPARse peaks impuTAtion
@@ -49,9 +50,9 @@ optional arguments:
                         provided, separate by "+"
   --outdir OUTDIR, -o OUTDIR
                         Output directory. Default: ./
-  --genome GENOME, -g GENOME
+  --genome {hg38}, -g {hg38}
                         Genome assembly
-  --binsize BINSIZE, -bs BINSIZE
+  --binsize {5kb,50kb}, -bs {5kb,50kb}
                         Size of the bins (genomic regions)
   --estimators ESTIMATORS, -e ESTIMATORS
                         Number of trees in Random Forest
