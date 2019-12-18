@@ -122,6 +122,7 @@ if rank == 0:
 	
 	print('\n##### Pre-Processing is done ... #####\n')
 	print('Training %d models for %d candidate bins'%(uniq_cand_labels.shape[0], len(candidates)))
+	print('Random Forest is used with %d trees'%(args.estimators))
 	print('The task is shared by %d processors'%(size))
 	
 	# rank 0 shares the dimensions for other ranks used to initiate
