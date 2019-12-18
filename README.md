@@ -68,7 +68,7 @@ optional arguments:
 
 ## Running SPARTA
 
-Applying SPARTA on a bed file that contains the sparse (300 peaks after removing gender specific chromosomes) input from an individual single cell is as simple as this:
+Applying SPARTA on a bed file that contains the sparse input (300 peaks after removing gender specific chromosomes) from an individual single cell is as simple as this:
 
 ```
 python SPARTA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
