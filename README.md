@@ -75,7 +75,7 @@ python SPARTA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
 ```
 In order to test whether it runs properly, you can add `--simulate` that restricts SPARTA to train machine learning models for only 100.
 
-## Command line arguments
+### Command line arguments
 
 Given an example from H3K27me3 in another resolution, the call could look like this, expecting the output to be stored in `/BC20160289/`.
 
