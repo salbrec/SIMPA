@@ -37,7 +37,7 @@ Finally activate the environment before running the algorithm:
 git clone https://github.com/salbrec/SPARTA.git
 cd SPARTA/
 
-python SPART.py --help
+python SPARTA.py --help
 
 
 usage: SPARTA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
