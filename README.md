@@ -106,7 +106,7 @@ head -n <number of bins> IMPUTATION_freq_prob.sparta | awk '{print $2"\t"$3"\t"$
 
 ### Runtime and MPI
 
-Due to the amount of machine learning models to be trained, SPARTA can take up to 13h for the imputation of one cell in 5kb resolution for H3K4me3. However, SPARTA is an MPI implementation that automatically distributes the computationally heavy part to multiple cores on a system providing an Open MPI installation. The number of cores can be defined by the user. An example `slurm` script is provided that allows to run SPARTA using many cores from several compute nodes after specifying the users account and the partition. We achieved the best efficiency using all 40 cores of one node (Intel® Xeon® Prozessor E5-2630 v4).
+Due to the amount of machine learning models to be trained, SPARTA can take up to 13h for the imputation of one cell in 5kb resolution for H3K4me3. However, SPARTA is an MPI implementation that automatically distributes the computationally heavy part to multiple cores on a system providing an Open MPI installation. The number of cores can be defined by the user. An example `slurm` script is provided that allows to run SPARTA using many cores from several compute nodes after specifying the users account and the partition. We achieved the best efficiency using all 40 cores of one node (Intel® Xeon® Prozessor E5-2630 v4). Run SPARTA with 4 node, each node with 64 core, it takes ~8 minutes for a single cell.
 
 ```
 sbatch slurm
