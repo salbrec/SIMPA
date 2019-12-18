@@ -2,7 +2,7 @@
 
 SPARTA is a method for SPARse peaks impuTAtion that leverages predictive information within epigenomic data from ENCODE to impute missing protein-DNA interactions for a histone mark or transcription factor of interest. SPARTA was tested on a recent dataset (Grosselin et al. 2019) to impute missing regions in sparse data from single-cell ChIP-seq of H3K4me3 and H3K27me3 in B-cell and T-cell [bioRxiv](https://giphy.com/gifs/love-movie-perfect-2BG086WOP2Xfi).
 
-<img src="workflow/SPARTA.png" width="900">
+<img src="figure/SPARTA.png" width="900">
 
 ## Installation with ANACONDA  
 
