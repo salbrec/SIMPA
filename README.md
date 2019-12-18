@@ -1,6 +1,6 @@
 # SPARTA - SPARse peaks impuTAtion
 
-SPARTA is a method for SPARse peaks impuTAtion that leverages predictive information within bulk ENCODE data to impute missing regions for a histone mark or transcription factor of interest. SPARTA is tested on a recent dataset (Grosselin et al. 2019) to impute DNA regions of H3K4me3 and H3K27me3 mark in B-cell and T-cell.
+SPARTA is a method for SPARse peaks impuTAtion that leverages predictive information within bulk ENCODE data to impute missing regions for a histone mark or transcription factor of interest. SPARTA was tested on a recent dataset (Grosselin et al. 2019) to impute DNA regions from single-cell ChIP-seq of H3K4me3 and H3K27me3 mark in B-cell and T-cell.
 
 <img src="workflow/SPARTA.png" width="800">
 
@@ -82,10 +82,28 @@ Due to the amount of machine learning models to be trained, SPARTA can take up t
 ```
 sbatch slurm
 ```
-Access to cloud computing or a high performance cluster will make it feasible to apply SPARTA to many single cells.
 
 ## SPARTA output
 
-Blaaa
+SPARTA creates two files. On in "sparta" format, a table describing one bin per line with the following columns:
+- ID of the bin
+- chromosome
+- start 
+- end
+- reference frequency
+- imputed probability
+The bins on the head have no imputed probability as those are the bins observed for the given single cell. Following bins are ranked by imputed probability.
+Based on the average number of bins observed in the target-specific reference experiments, SPARTA creates one final imputation result in bed-format.
+
+It is up to the user to create further bed-files of different sizes derived from the SPARTA table:
+
+```
+head -n <number of bins> IMPUTATION_freq_prob.sparta | awk '{print $2"\t"$3"\t"$4}'
+```
+
+
+
+
+
 
  
