@@ -11,9 +11,14 @@ First, install anaconda in case you do not have it for linux your machine. In an
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh
 bash Anaconda3-2019.10-Linux-x86_64.sh
+
+```
+Accept everything with "yes". After installation it might be necessary to initialize conda with
+```
+source ~/.bashrc
 ```
 
-Create a conda environment `sparta` with anaconda:
+### Create a conda environment `sparta` with anaconda:
 
 ```
 conda config --add channels defaults
