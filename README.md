@@ -92,8 +92,10 @@ SPARTA creates two files. On in "sparta" format, a table describing one bin per 
 - end
 - reference frequency
 - imputed probability
-The bins on the head have no imputed probability as those are the bins observed for the given single cell. Following bins are ranked by imputed probability.
-Based on the average number of bins observed in the target-specific reference experiments, SPARTA creates one final imputation result in bed-format.
+
+The bins on the head of this table have no imputed probability as those are the bins observed for the given single cell. Following bins are ranked by imputed probability.
+
+Based on the average number of bins observed in the target-specific reference experiments, SPARTA creates a second output, the final imputation result in bed-format.
 
 It is up to the user to create further bed-files of different sizes derived from the SPARTA table:
 
