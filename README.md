@@ -101,7 +101,7 @@ The second file is in `bed` format and describes the genomic regions for the sin
 It is up to the user to create further bed-files of different sizes derived from the SPARTA table:
 
 ```
-head -n <number of bins> IMPUTATION_freq_prob.sparta | awk '{print $2"\t"$3"\t"$4}'
+head -n <number of bins> IMPUTATION_freq_prob.sparta | awk '{print $2"\t"$3"\t"$4}' > new.bed
 ```
 
 ### Runtime and MPI
