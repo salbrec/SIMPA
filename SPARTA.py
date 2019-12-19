@@ -199,7 +199,7 @@ if rank == 0:
 	# create th SPARTA output table and the imputed bins bed file
 	impute_n = int(np.mean(ref_n_bins))
 	imputed_bed = ''
-	extended_bed = ''
+	extended_bed = 'BinID\tchromosome\tstart\tend\tfrequency\timputed_probability\n'
 	for n_bins_imp, (binID, frequency, imp_probability) in enumerate(bin_freq_prob):
 		if n_bins_imp <= impute_n:
 			imputed_bed += '%s\t%d\t%d\n'%(bin_bed_map[binID])
