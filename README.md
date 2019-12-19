@@ -24,7 +24,7 @@ source ~/.bashrc
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
-conda create -n sparta2 python=3.7 anaconda pandas=0.25.1 numpy=1.17.2 mpi4py=3.0.2
+conda create -n sparta python=3.7 anaconda pandas=0.25.1 numpy=1.17.2 mpi4py=3.0.2
 ```
 Finally activate the environment before running the algorithm:
 
