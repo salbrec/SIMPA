@@ -218,7 +218,7 @@ if rank == 0:
 	open('%s%s_imputed.bed'%(out_prefix, input_file_name), 'w').write(imputed_bed)
 	open('%s%s_freq_prob.sparta'%(out_prefix, input_file_name), 'w').write(extended_bed)
 	
-	print('\n##### Writing output to %s ... #####\n'%(out_prefix))
+	print('\n##### Writing output to "%s" #####\n'%(out_prefix))
 	print('Reference bulk experiments have in average %d bins'%(impute_n))
 	last_comment = ' (not really, because of "simulate")' if args.simulate else ''
 	print('%d bins were imputed%s'%(impute_n - len(sc_bins), last_comment))
