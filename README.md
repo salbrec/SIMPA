@@ -73,7 +73,32 @@ Applying SPARTA on a bed file that contains the sparse input (300 peaks after re
 ```
 python SPARTA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3 --simulate
 ```
-The optinal argument `--simulate` can be used to check if everything is running, restricts SPARTA to train machine learning models for only 100. To get the full result, which might take time, remove it.
+The expected output looks like this:
+
+```
+
+Given the sparse input there are 300 genomic regions converted into 300 bins of size 5kb
+Number of available bulk reference experiments: 178 (for H3K4me3)
+Number of bins with a signal in at least one bulk: 314856
+Number of candidate bins: 100 (simulation mode is on)
+Shape of matrix for training features: (178, 300)
+
+##### Pre-Processing is done ... #####
+
+Training 92 models for 100 candidate bins
+Random Forest is used with 100 trees
+The task is shared by 1 processors
+
+##### Writing output to ./ ... #####
+
+Reference bulk experiments have in average 32584 bins
+32284 bins were imputed
+Done!
+
+
+```
+
+Note, the optinal argument `--simulate` is used here for testnig purpose as it restticts SPARTA to train machine learning models for only 100 candidate bins randomly sampled. To get the full result, remove it.
 
 ### Command line arguments
 
