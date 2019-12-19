@@ -59,7 +59,7 @@ if rank == 0:
 	sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms, 
 															chrom_sizes, bin_size_int)
 	sc_bins = sorted(list(sc_bins))
-	print('Given the sparse input there are %d genomic regions converted into %d bins of size %s'%(
+	print('\nGiven the sparse input there are %d genomic regions converted into %d bins of size %s'%(
 		sum([len(p) for p in peaks.values()]), len(sc_bins), args.binsize))
 	
 	# get reference experiments for given target(s)
@@ -220,8 +220,9 @@ if rank == 0:
 	
 	print('\n##### Writing output to %s ... #####\n'%(out_prefix))
 	print('Reference bulk experiments have in average %d bins'%(impute_n))
-	print('%d bins were imputed'%(impute_n - len(sc_bins)))
-	print('Done!')
+	last_comment = '' if args.simulate else ' (not really, because of "simulate")'
+	print('%d bins were imputed%s'%(impute_n - len(sc_bins), last_comment))
+	print('Done!\n')
 
 
 
