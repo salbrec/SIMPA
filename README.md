@@ -1,6 +1,6 @@
 # SPARTA - SPARse peaks impuTAtion
 
-SPARTA is a method for SPARse peaks impuTAtion that leverages predictive information within epigenomic data from ENCODE to impute missing protein-DNA interactions for a histone mark or transcription factor of interest. SPARTA was tested on a recent dataset (Grosselin et al. 2019) to impute missing regions in sparse data from single-cell ChIP-seq of H3K4me3 and H3K27me3 in B-cell and T-cell [bioRxiv](https://giphy.com/gifs/love-movie-perfect-2BG086WOP2Xfi).
+SPARTA is a method for SPARse peaks impuTAtion that leverages predictive information within epigenomic data from ENCODE to impute missing protein-DNA interactions for a histone mark or transcription factor of interest. SPARTA was tested on a recent dataset (Grosselin et al. 2019) to impute missing regions in sparse data from single-cell ChIP-seq of H3K4me3 and H3K27me3 in B-cell and T-cell. Different to common single-cell imputation methods, SPARTA leverages predictive information within a dataset of > 2200 bulk ChIP-seq experiments from ENCODE. The user provides the sparse peaks of one single cell that are used by SPARTA to impute missing interactions while keeping cell-type specificity and the single cells individuality. More details here (soon) [bioRxiv](https://giphy.com/gifs/love-movie-perfect-2BG086WOP2Xfi)
 
 <img src="figure/SPARTA.png" width="900">
 
@@ -13,7 +13,7 @@ wget https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh
 bash Anaconda3-2019.10-Linux-x86_64.sh
 
 ```
-Accept everything with "yes". After installation it might be necessary to initialize conda with
+Accept licence and installation requirements with "yes", you might change the directory for anaconda. After installation it might be necessary to initialize conda with:
 ```
 source ~/.bashrc
 ```
@@ -24,7 +24,7 @@ source ~/.bashrc
 conda config --add channels defaults
 conda config --add channels conda-forge
 conda config --add channels bioconda
-conda create -n sparta python=3.7 anaconda mpi4py numpy
+conda create -n sparta2 python=3.7 anaconda pandas=0.25.1 numpy=1.17.2 mpi4py=3.0.2
 ```
 Finally activate the environment before running the algorithm:
 
@@ -71,9 +71,9 @@ optional arguments:
 Applying SPARTA on a bed file that contains the sparse input (300 peaks after removing gender specific chromosomes) from an individual single cell is as simple as this:
 
 ```
-python SPARTA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
+python SPARTA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3 --simulate
 ```
-In order to test whether it runs properly, you can add `--simulate` that restricts SPARTA to train machine learning models for only 100.
+The optinal argument `--simulate` can be used to check if everything is running, restricts SPARTA to train machine learning models for only 100. To get the full result, which might take time, remove it.
 
 ### Command line arguments
 
@@ -83,7 +83,7 @@ Given an example from H3K27me3 in another resolution, the call could look like t
 
 ## SPARTA output
 
-SPARTA creates two files. 
+SPARTA creates two files reusing the filename of the given bed file as prefix. 
 
 One in `sparta` format, a table describing one bin per line with the following columns:
 
