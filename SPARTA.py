@@ -220,7 +220,7 @@ if rank == 0:
 	
 	print('\n##### Writing output to %s ... #####\n'%(out_prefix))
 	print('Reference bulk experiments have in average %d bins'%(impute_n))
-	last_comment = '' if args.simulate else ' (not really, because of "simulate")'
+	last_comment = ' (not really, because of "simulate")' if args.simulate else ''
 	print('%d bins were imputed%s'%(impute_n - len(sc_bins), last_comment))
 	print('Done!\n')
 
