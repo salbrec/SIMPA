@@ -92,13 +92,13 @@ The task is shared by 1 processors
 ##### Writing output to ./ ... #####
 
 Reference bulk experiments have in average 32584 bins
-32284 bins were imputed
+32284 bins were imputed (not really, because of "simulate")
 Done!
 
 
 ```
 
-Note, the optinal argument `--simulate` is used here for testnig purpose as it restticts SPARTA to train machine learning models for only 100 candidate bins randomly sampled. To get the full result, remove it.
+Note, the optinal argument `--simulate` is used here for testnig purpose as it restticts SPARTA to train machine learning models for only 100 candidate bins. To get the full result, remove it.
 
 ### Command line arguments
 
