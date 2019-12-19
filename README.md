@@ -38,8 +38,11 @@ git clone https://github.com/salbrec/SPARTA.git
 cd SPARTA/
 
 python SPARTA.py --help
+```
 
+To receive this help text:
 
+```
 usage: SPARTA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
                  [--genome {hg38}] [--binsize {5kb,50kb}]
                  [--estimators ESTIMATORS] [--simulate]
@@ -62,7 +65,6 @@ optional arguments:
   --estimators ESTIMATORS, -e ESTIMATORS
                         Number of trees in Random Forest
   --simulate            Impute only 100 bins for testing the software
-
 
 ```
 
