@@ -121,7 +121,7 @@ One in `sparta` format, a table describing one bin per line with the following c
 - reference frequency
 - imputed probability
 
-The bins on the head of this table have no imputed probability as those are the bins observed for the given single cell. Following bins are ranked by imputed probability.
+The bins on top of this table have no imputed probability as those are the bins observed for the given single cell. The following imputed bins are ranked by the imputed probability.
 
 The second file is in `bed` format and describes the genomic regions for the single-cell bins followed by bins ranked by their imputed probability. The number of bins within this file is the average number of bins that SPARTA calculates based on the target-specific reference experiments used within the algorithm.
 
