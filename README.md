@@ -89,7 +89,7 @@ Training 92 models for 100 candidate bins
 Random Forest is used with 100 trees
 The task is shared by 1 processors
 
-##### Writing output to ./ ... #####
+##### Writing output to "./" #####
 
 Reference bulk experiments have in average 32584 bins
 32284 bins were imputed (not really, because of "simulate")
