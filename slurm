@@ -8,7 +8,7 @@
 #SBATCH --output=./%A.out			# output file name
 #SBATCH -N 4					# using 4 nodes
 #SBATCH -n 160					# expecting 64 cores per node
-#SBATCH --mem-per-cpu=500MB			# memory allocated for job: 256 * 500MB 
+#SBATCH --mem-per-cpu=1GB			# memory allocated for job: 160 * 1GB 
 
 # load an installed Open MPI
 module load mpi/OpenMPI/3.1.4-GCC-8.3.0
