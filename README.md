@@ -6,7 +6,7 @@ SPARTA is a method for SPARse peaks impuTAtion that leverages predictive informa
 
 ## Installation with ANACONDA  
 
-First, install anaconda in case you do not have it for linux your machine. In any way we highly recommend to install the most recent one.
+First, install anaconda in case you do not have it in your linux machine. We highly recommend to install the most recent one.
 
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh
@@ -40,7 +40,7 @@ cd SPARTA/
 python SPARTA.py --help
 ```
 
-To receive this help text:
+The text of the help has to be as follow:
 
 ```
 usage: SPARTA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
@@ -104,9 +104,9 @@ Note, the optinal argument `--simulate` is used here for testnig purpose as it r
 
 ### Command line arguments
 
-Given an example from H3K27me3 in another resolution, the call could look like this, expecting the output to be stored in `/BC20160289/`.
+Given an example from H3K27me3 in another resolution, the call could look like this, expecting the output to be stored in `/BC20160289/`.  
 
-`python SPARTA.py -b ./scExamples/H3K27me3_hg38_50kb/BC20160289.bed -t H3K27me3 -bs 50kb -o ./BC20160289/`
+`python SPARTA.py -b ./scExamples/H3K27me3_hg38_50kb/BC20160289.bed -t H3K27me3 -bs 50kb -o ./BC20160289/ --simulate`
 
 ## SPARTA output
 
