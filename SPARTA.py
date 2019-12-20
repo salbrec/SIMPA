@@ -20,10 +20,10 @@ if argv[0].find('/') >= 0:
 	sparta_dir = argv[0][: - argv[0][::-1].find('/')]
 
 parser = argparse.ArgumentParser(description='SPARTA: SPARse peaks impuTAtion')
-parser.add_argument('--bed', '-b', type=str, required=True, help='Sparse single-cell input dataset path')
-parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the bulk reference data 
-					(ususally the on used in scChIP). When multiple targets provided, separate by "+"''')
-parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: ./')
+parser.add_argument('--bed', '-b', type=str, required=True, help='Path to bed file with sparse single-cell input')
+parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments 
+					(ususally the on used in scChIP). When multiple targets are provided, separate by "+"''')
+parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
 parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38'], help='Genome assembly')
 parser.add_argument('--binsize', '-bs', type=str, default='5kb', choices=['5kb','50kb'], help='Size of the bins (genomic regions)')
 parser.add_argument('--estimators', '-e', type=int, default=100, help='Number of trees in Random Forest')
@@ -68,7 +68,7 @@ if rank == 0:
 	print('Number of available bulk reference experiments: %d (for %s)'%(metadata.shape[0],args.targets))
 	
 	# read in the reference experiments, already converted into bins
-	# collect also all bins that appear in one reference experiment
+	# collect also all bins that are observed in at least one reference experiment
 	all_ref_bins = set()
 	ref_bins_map = {}
 	for accession in metadata['accession']:
@@ -85,7 +85,7 @@ if rank == 0:
 		freq = float(freq) / float(metadata.shape[0])
 		freq_map[bid] = freq
 	
-	# number of bins for each reference set
+	# number of bins within a reference set
 	ref_n_bins = [len(ref_bins_map[acc]) for acc in metadata['accession']]
 	
 	# define candidate bins that are potentially imputed
@@ -104,8 +104,8 @@ if rank == 0:
 	training_features = np.array(training_features)
 	print('Shape of matrix for training features:', training_features.shape)
 	
-	# searching for bins with exactly the same values
-	# for bins sharing the same column, onoly one model is trained
+	# searching for bins with exactly the same values, for bins having the same
+	# column values, only one model is trained and applied for all these bins
 	bin_index_map = {}
 	key_index_map = {}
 	uniq_cand_labels = []
@@ -135,8 +135,8 @@ if rank != 0:
 	training_features = np.empty((n_ref_exps,n_sc_bins), dtype=np.int)
 	uniq_cand_labels = np.empty((dim1_uniq_cand_labels, n_ref_exps), dtype=np.int)
 
-# rank 0 pre-processed the data, created the training features and collected the 
-# candidates that is shared with other ranks by broadcast
+# rank 0 pre-processed the data, created the training features, and collected the 
+# candidates. This data is now shared with other ranks by broadcast
 comm.Bcast(training_features, root=0)
 comm.Bcast(uniq_cand_labels, root=0)
 
@@ -147,13 +147,13 @@ t = (rank+1) * chunk
 if t > dim1_uniq_cand_labels:
 	t = dim1_uniq_cand_labels
 
-# imp_prob_rank collects the results of each rank
+# imp_prob_rank collects the results of each single rank
 imp_prob_rank = np.zeros(chunk, dtype=np.float) - 1.0
 
 # initialize classification algorithm with Random Forest
 clf = RandomForestClassifier(n_estimators=args.estimators, random_state=42)
 
-# for each candidate a classification model is trained, the more
+# for each candidate bin a classification model is trained, the more
 # cores are used, the less models are trained by one rank
 artificial_inst = np.array([training_features.shape[1] * [1]])
 for send_index, reference_index in enumerate(range(f,t)):
@@ -169,7 +169,7 @@ for send_index, reference_index in enumerate(range(f,t)):
 		prob = clf.predict_proba(artificial_inst)[0][1]
 	imp_prob_rank[send_index] = prob
 
-# MPI Gather of the results from each rank, collected in rank 0
+# MPI-gather of the results from each rank, collected in rank 0
 if rank == 0:
 	imp_prob_all = np.empty((size,chunk), dtype=np.float)
 comm.Gather(imp_prob_rank, imp_prob_all, root=0)
@@ -196,7 +196,7 @@ if rank == 0:
 	sc_bins_freq_def = [(bid, freq_map.get(bid, 0.0), -1.0) for bid in sc_bins]
 	bin_freq_prob = sc_bins_freq_def + bin_freq_prob
 	
-	# create th SPARTA output table and the imputed bins bed file
+	# create the SPARTA output table and the imputed bins bed file
 	impute_n = int(np.mean(ref_n_bins))
 	imputed_bed = ''
 	extended_bed = 'BinID\tchromosome\tstart\tend\tfrequency\timputed_probability\n'
