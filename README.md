@@ -142,38 +142,3 @@ Having an MPI installation on a Linux server or local Linux machine, SPARTA can 
 ```
 mpiexec -n 2 python SPARTA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
 ```
-
-# Proloque
-
-Well... One could say: Training > 100,000 classification models for one single cell... 
-
-This is Madness!
-
-
-...
-
-
-...
-
-
-...
-
-
-Madness!?!
-
-
-...
-
-
-...
-
-
-...
-
-
-THIS IS SPARTA
-
-
-
-
- 
