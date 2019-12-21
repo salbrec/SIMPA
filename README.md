@@ -100,7 +100,7 @@ Done!
 
 ```
 
-Note, the optinal argument `--simulate` is used here for testnig purpose as it restticts SPARTA to train machine learning models for only 100 candidate bins. To get the full result, remove it.
+Note, the optinal argument `--simulate` is used here for testnig purpose as it restricts SPARTA to train machine learning models for only 100 candidate bins. To get the full result, remove it.
 
 ### Command line arguments
 
