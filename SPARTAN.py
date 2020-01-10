@@ -22,7 +22,7 @@ if argv[0].find('/') >= 0:
 parser = argparse.ArgumentParser(description='SPARTAN: SPARse peaks impuTAtioN')
 parser.add_argument('--bed', '-b', type=str, required=True, help='Path to bed file with sparse single-cell input')
 parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments 
-					(ususally the on used in scChIP). When multiple targets are provided, separate by "+"''')
+					(ususally the one used in the scChIP). When multiple targets are provided, separate by "+"''')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
 parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38'], help='Genome assembly')
 parser.add_argument('--binsize', '-bs', type=str, default='5kb', choices=['5kb','50kb'], help='Size of the bins (genomic regions)')
