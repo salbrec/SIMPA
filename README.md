@@ -44,20 +44,20 @@ The text of the help has to be as follow:
 
 ```
 usage: SPARTAN.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
-                 [--genome {hg38}] [--binsize {5kb,50kb}]
-                 [--estimators ESTIMATORS] [--simulate]
+                  [--genome {hg38}] [--binsize {5kb,50kb}]
+                  [--estimators ESTIMATORS] [--simulate]
 
 SPARTAN: SPARse peaks impuTAtioN
 
 optional arguments:
   -h, --help            show this help message and exit
-  --bed BED, -b BED     Sparse single-cell input dataset path
+  --bed BED, -b BED     Path to bed file with sparse single-cell input
   --targets TARGETS, -t TARGETS
-                        Target(s) defining the bulk reference data (ususally
-                        the on used in scChIP). When multiple targets
-                        provided, separate by "+"
+                        Target(s) defining the specific reference experiments
+                        (ususally the one used in the scChIP). When multiple
+                        targets are provided, separate by "+"
   --outdir OUTDIR, -o OUTDIR
-                        Output directory. Default: ./
+                        Output directory. Default: "./"
   --genome {hg38}, -g {hg38}
                         Genome assembly
   --binsize {5kb,50kb}, -bs {5kb,50kb}
