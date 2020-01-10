@@ -15,11 +15,11 @@ size = comm.Get_size()
 import utils.pp as pp
 import utils.utils as utils
 
-sparta_dir = './'
+spartan_dir = './'
 if argv[0].find('/') >= 0:
-	sparta_dir = argv[0][: - argv[0][::-1].find('/')]
+	spartan_dir = argv[0][: - argv[0][::-1].find('/')]
 
-parser = argparse.ArgumentParser(description='SPARTA: SPARse peaks impuTAtion')
+parser = argparse.ArgumentParser(description='SPARTAN: SPARse peaks impuTAtioN')
 parser.add_argument('--bed', '-b', type=str, required=True, help='Path to bed file with sparse single-cell input')
 parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments 
 					(ususally the on used in scChIP). When multiple targets are provided, separate by "+"''')
@@ -32,7 +32,7 @@ parser.add_argument('--simulate', action='store_true', help='Impute only 100 bin
 # parse and pre-process command line arguments
 args = parser.parse_args()
 bin_size_int = int(args.binsize.replace('bp', '').replace('kb', '000'))
-ENCODE_dir = '%sdata/ENCODE/%s/%s/'%(sparta_dir, args.genome, args.binsize)
+ENCODE_dir = '%sdata/ENCODE/%s/%s/'%(spartan_dir, args.genome, args.binsize)
 target_set = set(args.targets.split('+'))
 
 # initialize variables used by all ranks
@@ -54,7 +54,7 @@ if rank == 0:
 	# initialize variables needed to read in the sparse single-cell input
 	# that is converted into a set (or list) of bins
 	allowed_chroms = utils.get_allowed_chrom_str()
-	chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s/sizes.tsv'%(sparta_dir, args.genome))
+	chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s/sizes.tsv'%(spartan_dir, args.genome))
 	peaks = pp.get_peaks(args.bed, allowed_chroms, enrich_index=-1)
 	sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms, 
 															chrom_sizes, bin_size_int)
@@ -63,7 +63,7 @@ if rank == 0:
 		sum([len(p) for p in peaks.values()]), len(sc_bins), args.binsize))
 	
 	# get reference experiments for given target(s)
-	metadata = pd.read_csv('%sdata/metadata_ENCODE.tsv'%(sparta_dir), sep='\t')
+	metadata = pd.read_csv('%sdata/metadata_ENCODE.tsv'%(spartan_dir), sep='\t')
 	metadata = metadata.loc[[True if target in target_set else False for target in metadata['target']]]
 	print('Number of available bulk reference experiments: %d (for %s)'%(metadata.shape[0],args.targets))
 	
@@ -196,7 +196,7 @@ if rank == 0:
 	sc_bins_freq_def = [(bid, freq_map.get(bid, 0.0), -1.0) for bid in sc_bins]
 	bin_freq_prob = sc_bins_freq_def + bin_freq_prob
 	
-	# create the SPARTA output table and the imputed bins bed file
+	# create the SPARTAN output table and the imputed bins bed file
 	impute_n = int(np.mean(ref_n_bins))
 	imputed_bed = ''
 	extended_bed = 'BinID\tchromosome\tstart\tend\tfrequency\timputed_probability\n'
@@ -216,7 +216,7 @@ if rank == 0:
 	input_file_name = args.bed.split('/')[-1].replace('.bed','')
 	
 	open('%s%s_imputed.bed'%(out_prefix, input_file_name), 'w').write(imputed_bed)
-	open('%s%s_freq_prob.sparta'%(out_prefix, input_file_name), 'w').write(extended_bed)
+	open('%s%s_freq_prob.spartan'%(out_prefix, input_file_name), 'w').write(extended_bed)
 	
 	print('\n##### Writing output to "%s" #####\n'%(out_prefix))
 	print('Reference bulk experiments have in average %d bins'%(impute_n))
