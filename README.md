@@ -44,10 +44,10 @@ The text of the help has to be as follow:
 
 ```
 usage: SIMPA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
-                  [--genome {hg38}] [--binsize {5kb,50kb}]
-                  [--estimators ESTIMATORS] [--simulate]
+                [--genome {hg38}] [--binsize {5kb,50kb}]
+                [--estimators ESTIMATORS] [--simulate]
 
-SIMPA: Single-cell chIp-seq iMPutAtion
+SIMPA - Single-cell chIp-seq iMPutAtion
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -65,6 +65,7 @@ optional arguments:
   --estimators ESTIMATORS, -e ESTIMATORS
                         Number of trees in Random Forest
   --simulate            Impute only 100 bins for testing the software
+
 
 ```
 
