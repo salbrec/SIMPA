@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH --job-name=SPARTAN			# job name
+#SBATCH --job-name=SIMPA			# job name
 #SBATCH -p <PARTITION>				# partition
 #SBATCH -A <ACCOUNT>				# the users account
 #SBATCH --time=01:30:00				# time
@@ -14,5 +14,5 @@
 module load mpi/OpenMPI/3.1.4-GCC-8.3.0
 
 # running the example provided in the repositiory
-srun --unbuffered -n 160 --mpi=pmi2 python SPARTAN.py --bed ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed --targets H3K4me3
+srun --unbuffered -n 160 --mpi=pmi2 python SIMPA.py --bed ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed --targets H3K4me3
 
