@@ -32,6 +32,13 @@ Finally activate the environment before running the algorithm:
 
 
 ## Clone repository and display command line arguments
+In case `git` is not installed, you can install it via `conda` as well:
+
+```
+conda install -c anaconda git
+```
+
+Clone repository and run SIMPA to get the usage information:
 
 ```
 git clone https://github.com/salbrec/SIMPA.git
@@ -40,7 +47,7 @@ cd SIMPA/
 python SIMPA.py --help
 ```
 
-The text of the help has to be as follow:
+The expected output looks like this:
 
 ```
 usage: SIMPA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
@@ -65,7 +72,6 @@ optional arguments:
   --estimators ESTIMATORS, -e ESTIMATORS
                         Number of trees in Random Forest
   --simulate            Impute only 100 bins for testing the software
-
 
 ```
 
