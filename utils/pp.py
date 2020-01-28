@@ -30,13 +30,14 @@ def bin_it(peaks, allowed_chromosomes, chrom_sizes, bin_size):
 		bin_end = bin_size
 		while bin_end < chrom_size:
 			bin_start = bin_end - bin_size
-			for peak in peaks[chrom]:
-				if peak[2] > bin_start:
-					if peak[1] < bin_end:
-						bins_set.add(bin_ID)
-						bin_fdr.append((bin_ID, peak[3]))
-					else:				# early exit: since peaks are sorted the loop can be broken
-						break			#             when the start of the bin is "behind" the end of the current peak
+			if chrom in peaks:
+				for peak in peaks[chrom]:
+					if peak[2] > bin_start:
+						if peak[1] < bin_end:
+							bins_set.add(bin_ID)
+							bin_fdr.append((bin_ID, peak[3]))
+						else:				# early exit: since peaks are sorted the loop can be broken
+							break			#             when the start of the bin is "behind" the end of the current peak
 			output_end = bin_end if bin_end < chrom_size else chrom_size
 			position_map[bin_ID] = (chrom, bin_start, output_end)
 			# update the running values
