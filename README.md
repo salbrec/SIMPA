@@ -6,7 +6,7 @@ SIMPA is a method for single-cell ChIP-seq imputation that leverages predictive 
 
 ## Installation
 
-SIMPA runs on a Linux operating system and was tested on:
+SIMPA, implemented in Python, runs on a Linux operating system and was tested on:
 - Ubuntu 16.04.6 LTS (Xenial Xerus)
 - Ubuntu 18.04.3 LTS (Bionic Beaver)
 - CentOS Linux 7 (Core)
@@ -161,3 +161,4 @@ Having an MPI installation on a Linux server or local Linux machine, SIMPA can a
 ```
 mpiexec -n 2 python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
 ```
+Additional non-standard hardware for such an execution is not required.
