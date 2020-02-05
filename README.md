@@ -4,7 +4,17 @@ SIMPA is a method for single-cell ChIP-seq imputation that leverages predictive 
 
 <img src="figure/SIMPA.png" width="900">
 
-## Installation with ANACONDA  
+## Installation
+
+SIMPA runs on a Linux operating system and was tested on:
+- Ubuntu 16.04.6 LTS (Xenial Xerus)
+- Ubuntu 18.04.3 LTS (Bionic Beaver)
+- CentOS Linux 7
+- Debian GNU/Linux 9 (stretch)
+
+The following installation steps may take up to 20 minutes in total.
+
+### Installation of ANACONDA  
 
 First, install anaconda in case you do not have it in your linux machine. We highly recommend to install the most recent one.
 
