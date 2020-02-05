@@ -12,7 +12,7 @@ SIMPA runs on a Linux operating system and was tested on:
 - CentOS Linux 7
 - Debian GNU/Linux 9 (stretch)
 
-The following installation steps may take up to 20 minutes in total.
+The following installation steps may take up to 15 minutes in total.
 
 ### Installation of ANACONDA  
 
