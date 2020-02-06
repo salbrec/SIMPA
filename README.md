@@ -11,8 +11,9 @@ SIMPA, implemented in Python, runs on a Linux operating system and was tested on
 - Ubuntu 18.04.3 LTS (Bionic Beaver)
 - CentOS Linux 7 (Core)
 - Debian GNU/Linux 9 (stretch)
+- macOS Catalina (10.15.2)
 
-The following installation steps may take up to 15 minutes in total. The following commands for installation and applying SIMPA need to be ran within a Linux terminal.
+The following installation steps may take up to 15 minutes in total. Open a Linux terminal to run the commands for the installation and execution of SIMPA.
 
 ### Installation of ANACONDA  
 
