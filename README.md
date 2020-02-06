@@ -54,13 +54,13 @@ Clone repository and run SIMPA to get the usage information:
 git clone https://github.com/salbrec/SIMPA.git
 cd SIMPA/
 
-python SIMPA.py --help
+python SIMPA_1_0.py --help
 ```
 
 The expected output looks like this:
 
 ```
-usage: SIMPA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
+usage: SIMPA_1_0.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
                 [--genome {hg38}] [--binsize {5kb,50kb}]
                 [--estimators ESTIMATORS] [--simulate]
 
@@ -90,7 +90,7 @@ optional arguments:
 Applying SIMPA on a bed file that contains the sparse input (300 peaks after removing gender specific chromosomes) from an individual single cell is as simple as this:
 
 ```
-python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3 --simulate
+python SIMPA_1_0.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3 --simulate
 ```
 The expected output looks like this:
 
@@ -124,7 +124,7 @@ Note, the optinal argument `--simulate` is used here for testnig purpose as it r
 Given an example from H3K27me3 in another resolution, the call could look like this, expecting the output to be stored in `/BC20160289/`.  
 
 ```
-python SIMPA.py -b ./scExamples/H3K27me3_hg38_50kb/BC20160289.bed -t H3K27me3 -bs 50kb -o ./BC20160289/ --simulate
+python SIMPA_1_0.py -b ./scExamples/H3K27me3_hg38_50kb/BC20160289.bed -t H3K27me3 -bs 50kb -o ./BC20160289/ --simulate
 ```
 
 ## SIMPA output
@@ -159,6 +159,6 @@ sbatch slurm
 ```
 Having an MPI installation on a Linux server or local Linux machine, SIMPA can also be used with `mpiexec`. The following call runs with 2 cores:
 ```
-mpiexec -n 2 python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
+mpiexec -n 2 python SIMPA_1_0.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
 ```
 Additional non-standard hardware for such an execution is not required.
