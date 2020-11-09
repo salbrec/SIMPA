@@ -87,13 +87,6 @@ for bid in all_ref_bins:
 # number of bins within a reference set
 ref_n_bins = [len(ref_bins_map[acc]) for acc in metadata['accession']]
 
-# TODO: think about: more than one bin?
-# define the candidate(s)					RefFreq 
-# Example: chr11:2377000-2378500 (CD81)		0.972
-# Example: chr9:35610500-35612000 (CD72)	0.006
-# Example: chr19:35329000-35329999 (CD22)	0.146
-# Example: chr16:28931500-28933500 (CD19)	0.135 (good in combi with BC19017409)
-
 cand_chr = args.summit.split(':')[0]
 cand_start = int(args.summit.split(':')[1])
 cand_end = cand_start + 1
