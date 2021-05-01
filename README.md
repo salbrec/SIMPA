@@ -142,7 +142,7 @@ One in `simpa` format, a table describing one bin per line with the following co
 - reference frequency
 - imputed probability
 
-The bins on top of this table have no imputed probability as those are the bins observed for the given single cell. The following imputed bins are ranked by the imputed probability.
+The bins on top of this table have no imputed probability (value in imputed_probability column is set to -1) as those are the bins observed for the given single cell. The following imputed bins are ranked by the imputed probability in decreasing order (from 1.0 to 0.0).
 
 The second file is in `bed` format and describes the genomic regions for the single-cell bins followed by bins ranked by their imputed probability. The number of bins within this file is the average number of bins that SIMPA calculates based on the target-specific reference experiments used within the algorithm.
 
@@ -225,6 +225,6 @@ sbatch slurm
 ```
 Having an MPI installation on a Linux server or local Linux machine, SIMPA can also be used with `mpiexec`. The following call runs with 2 cores:
 ```
-mpiexec -n 2 python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969.bed -t H3K4me3
+mpiexec -n 2 python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969_B-cell.bed -t H3K4me3
 ```
 Additional non-standard hardware for such an execution is not required.
