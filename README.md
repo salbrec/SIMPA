@@ -1,60 +1,53 @@
 # SIMPA - Single-cell chIp-seq iMPutAtion
 
-SIMPA is a method for single-cell ChIP-seq imputation that leverages predictive information within epigenomic data from ENCODE to impute missing protein-DNA interactions for a histone mark or transcription factor of interest. SIMPA was tested on a recent dataset (Grosselin et al. 2019) to impute missing regions in sparse data from single-cell ChIP-seq of H3K4me3 and H3K27me3 in B-cells and T-cells. Different to common single-cell imputation methods, SIMPA leverages predictive information within bulk ChIP-seq experimental data. This dataset contains > 2.200 experiments downloaded from ENCODE and available in this repository, preprocessed for SIMPA. The user provides peaks of one single cell that are used by SIMPA to impute missing interactions for the target (histone mark or transcription factor, also specified by the user) of interest while keeping cell-type specificity and the cells individuality. In our preprint on [bioRxiv](https://www.biorxiv.org/content/10.1101/2019.12.20.883983v3) we present SIMPA's capability to complete sparse single-cell input while improving cell-type clustering and recovering cell-type-specific pathways.
+SIMPA is a method for **S**ingle-cell Ch**I**P-seq i**MP**ut**A**tion that leverages predictive information within epigenomic data from ENCODE to impute missing protein-DNA interactions for a histone mark or transcription factor of interest. SIMPA was tested on a recent dataset (Grosselin et al. 2019) to impute missing regions in sparse data from single-cell ChIP-seq of H3K4me3 and H3K27me3 in B-cells and T-cells. Different to common single-cell imputation methods, SIMPA leverages predictive information within bulk ChIP-seq experimental data. This dataset contains > 2.200 experiments downloaded from ENCODE and available in this repository, preprocessed for SIMPA. The user provides peaks of one single cell that are used by SIMPA to impute missing interactions for the target (histone mark or transcription factor, also specified by the user) of interest while keeping cell-type specificity and the cells individuality. In our preprint on [bioRxiv](https://www.biorxiv.org/content/10.1101/2019.12.20.883983v3) we present SIMPA's capability to complete sparse single-cell input while improving cell-type clustering and recovering cell-type-specific pathways. Moreover, SIMPA was extended by InterSIMPA which allow you to interpret the underlying machine learning models trained for the purpose of imputation. An example for how to do this, is provided below.
 
 <img src="figure/SIMPA.png" width="900">
 
-## Installation
+## Software Installation
 
-SIMPA, implemented in Python, runs on a Linux operating system and was tested on:
+SIMPA and InterSIMPA, both implemented in Python, run on a Linux operating system and was tested on:
 - Ubuntu 16.04.6 LTS (Xenial Xerus)
 - Ubuntu 18.04.3 LTS (Bionic Beaver)
 - CentOS Linux 7 (Core)
 - Debian GNU/Linux 9 (stretch)
 - macOS Catalina (10.15.2)
 
-The following installation steps may take up to 15 minutes in total. Open a Linux terminal to run the commands for the installation and execution of SIMPA.
-
-### Installation of ANACONDA  
-
-First, install anaconda in case you do not have it in your linux machine. We highly recommend to install the most recent one.
+The easiest way to get ready for SIMPA is pulling the docker and running the scripts inside the docker. The following descriptions explain how to get started with docker. However, it is also possible to install everything manually (see further installation guides at the bottom of this README). If you are familiar with the installation of python packages and you would simply like to update the installation you already have, these are the main packages needed together with the versions tested. Other versions might work perfectly fine, though.
 
 ```
-wget https://repo.anaconda.com/archive/Anaconda3-2019.10-Linux-x86_64.sh
-bash Anaconda3-2019.10-Linux-x86_64.sh
-
-```
-Accept licence and installation requirements with "return" and "yes", but follow the instructions, you might like to change the directory for anaconda. After installation it is necessary to initialize conda with:
-```
-source ~/.bashrc
+pandas=1.1.3 
+numpy=1.19.2 
+mpi4py=3.0.3 
+terminaltables=3.1.0
 ```
 
-### Create a conda environment `simpa` with anaconda:
+To start with docker, please open a Linux terminal and run the following commands to first install docker, then pull, and finally run the image.
 
 ```
-conda config --add channels defaults
-conda config --add channels conda-forge
-conda config --add channels bioconda
-conda create -n simpa python=3.7 anaconda pandas=0.25.1 numpy=1.17.2 mpi4py=3.0.2 terminaltables=3.1.0
-```
-Finally activate the environment before running the algorithm:
+sudo apt-get install docker
+sudo apt-get install docker.io 
 
-`conda activate simpa`
+sudo docker login
 
-
-## Clone repository and display command line arguments
-In case `git` is not installed, you can install it via `conda` as well:
+sudo docker pull salbrec/simdock
+sudo docker run -i -t -v "/home/:/home/" salbrec/simdock /bin/bash
 
 ```
-conda install -c anaconda git
-```
 
-Clone repository and run SIMPA to get the usage information:
+When using the docker you’ll be directly within the right directory and able to use the scripts right away. Note, that you might save the output to your project directories and you might also prefer to use the updated github repository. Simply type `git pull` to update the repository within the docker.
+
+We recommend to clone the git repository outside the docker. To clone the repository into your desired destination, change directory with `cd` and run:
 
 ```
 git clone https://github.com/salbrec/SIMPA.git
-cd SIMPA/
+```
 
+#### *Check out further installation guides for running Docker with Windows 10 or creating your own conda environment (on the bottom of this README)*
+
+Run SIMPA to get the usage information:
+
+```
 python SIMPA.py --help
 ```
 
@@ -114,7 +107,6 @@ The task is shared by 1 processors
 Reference bulk experiments have in average 32584 bins
 31941 bins were imputed (not really, because of "simulate")
 Done!
-
 
 
 ```
@@ -223,6 +215,61 @@ Due to the amount of machine learning models to be trained, SIMPA can take up to
 ```
 sbatch slurm
 ```
+
+## Further installation guides
+
+### Installation with Docker Desktop on Windows
+
+To install Docker Desktop follow the instructions on their website:
+https://docs.docker.com/docker-for-windows/install/
+
+Use git from powershell to clone seqQscorer
+```
+git clone https://github.com/salbrec/SIMPA.git
+
+```
+To get the image and activate it is similar to Linux. 
+However it is advisable to only link the SIMPA folder.
+Docker mentions that binding Windows Volumes can lead to performance drops and suggest to bind mounted folders from the linux filesystem in wsl rather than a folder on the windows file system.
+Both work fine and can be accessed via powershell from the windows side or from the bash from the Linux/WSL side.
+
+Below is an example from powershell, for linux just add sudo in front.
+```
+docker pull salbrec/simdock
+docker run -i -t --name SIMPA -v "C:/Users/User/SIMPA:/SIMPA" salbrec/simdock 
+```
+Now you can just change to the newqscorer folder and start using the software!
+```
+(SIMPA) root@ xxx : cd SIMPA
+```
+In this example the SIMPA folder that is on windows is to find in the root of the docker image.
+The docker image is named SIMPA and can be invoked by this name in the future.
+You can copy files from the windows side and compute from the docker side.
+
+Docker advises to use WSL, the mounted Linux System for Windows. If you want to use this, the installation and handling would be similar to the normal Linux installation, but the Installation of Docker Desktop for Windows also needs to be done.
+
+### Installation with ANACONDA  
+
+First, install anaconda in case you do not have it in your linux machine. We recommend to use the one that is suggested here. For the installation of Anaconda run the following two lines in your terminal.
+
+```
+wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh
+bash Anaconda3-2020.11-Linux-x86_64.sh
+
+```
+Accept licence and installation requirements with "return" and "yes", but follow the instructions, you might like to change the directory for anaconda. After installation it is necessary to initialize conda:
+```
+source ~/.bashrc
+
+```
+
+Now use the yml file `conda_env.yml` to create the conda environment and activate it.
+
+```
+conda env create -f conda_env.yml
+conda activate simpa
+```
+
 Having an MPI installation on a Linux server or local Linux machine, SIMPA can also be used with `mpiexec`. The following call runs with 2 cores:
 ```
 mpiexec -n 2 python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969_B-cell.bed -t H3K4me3
