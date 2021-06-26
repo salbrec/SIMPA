@@ -216,6 +216,12 @@ Due to the amount of machine learning models to be trained, SIMPA can take up to
 sbatch slurm
 ```
 
+SIMPA can also be used with `mpiexec`. This works already within the docker or with a classical conda installation. The following call runs with, for instance, 2 cores:
+```
+mpiexec -n 2 python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969_B-cell.bed -t H3K4me3
+```
+Additional non-standard hardware for such an execution is not required.
+
 ## Further installation guides
 
 ### Installation with Docker Desktop on Windows
@@ -254,7 +260,7 @@ First, install anaconda in case you do not have it in your linux machine. We rec
 
 ```
 wget https://repo.anaconda.com/archive/Anaconda3-2021.05-Linux-x86_64.sh
-bash Anaconda3-2020.11-Linux-x86_64.sh
+bash Anaconda3-2021.05-Linux-x86_64.sh
 
 ```
 Accept licence and installation requirements with "return" and "yes", but follow the instructions, you might like to change the directory for anaconda. After installation it is necessary to initialize conda:
@@ -270,8 +276,4 @@ conda env create -f conda_env.yml
 conda activate simpa
 ```
 
-Having an MPI installation on a Linux server or local Linux machine, SIMPA can also be used with `mpiexec`. The following call runs with 2 cores:
-```
-mpiexec -n 2 python SIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969_B-cell.bed -t H3K4me3
-```
-Additional non-standard hardware for such an execution is not required.
+
