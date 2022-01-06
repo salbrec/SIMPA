@@ -25,8 +25,8 @@ parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s
 					(ususally the one used in the scChIP). When multiple targets are provided, separate by "+"''')
 parser.add_argument('--summit', '-s', type=str, required=True, help='Peak summit of target region to be investigated')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
-parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38, mm10'], help='Genome assembly')
-parser.add_argument('--binsize', '-bs', type=str, default='5kb', choices=['1kb, 5kb','50kb'], help='Size of the bins (genomic regions)')
+parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38','mm10'], help='Genome assembly')
+parser.add_argument('--binsize', '-bs', type=str, default='5kb', choices=['1kb','5kb','50kb'], help='Size of the bins (genomic regions)')
 parser.add_argument('--estimators', '-e', type=int, default=1000, help='Number of trees in Random Forest')
 parser.add_argument('--importance', '-it', type=float, default=1.0, help='Threshold for the feature importance')
 
@@ -159,11 +159,11 @@ for gene_id in gene_info['geneID']:
 print('\nFeatures, represented by bins, most important for the model (importance > 1%)')
 print('additional annotations regarding the next gene (if bin overlaps gene-body, Distance==0)\n')
 
-table = [['Bin ID','Importance','Genomic Region','Next Gene (NG)','Dist TSS',
-		  'Genebody','Dist TTS','NG Orientation','NG Description']]
+header = ['Bin ID','Importance','Genomic Region','Next Gene (NG)','Dist TSS',
+		  'Genebody','Dist TTS','NG Orientation','NG Description']
+display = [header]
+full_table = [ list(map(lambda h: h.replace(' ','_'), header)) ]
 for bin_id, importance in sc_bin_importance:
-	if importance < args.importance:
-		break
 	bin_chrom = bin_bed_map[bin_id][0]
 	bin_start = bin_bed_map[bin_id][1]
 	bin_end   = bin_bed_map[bin_id][2]
@@ -200,11 +200,28 @@ for bin_id, importance in sc_bin_importance:
 	row = [bin_id, '%.1f%s'%(importance,'%'), '%s:%d-%d'%(bin_bed_map[bin_id])]
 	row += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no',
 		 str(dist_tts), gene_orient.get(next_gene_id,'???'), gene_descr.get(next_gene_id,'???')]
-	table.append(row)
+	if importance >= args.importance:
+		display.append(row)
+	frow = [str(bin_id), str(importance), '%s:%d-%d'%(bin_bed_map[bin_id])]
+	frow += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no',
+		 str(dist_tts), gene_orient.get(next_gene_id,'???'), gene_descr.get(next_gene_id,'???')]
+	full_table.append(frow)
 
-print_nice_table(table)
+# display
+print_nice_table(display)
 print('')
 
+out_table = ''
+for row in full_table:
+	out_table += ','.join(map(str,row)) + '\n'
+
+out_prefix = args.outdir
+out_prefix += '/' if out_prefix[-1] != '/' else ''
+if not os.path.exists(out_prefix):
+	os.makedirs(out_prefix)
+input_file_name = args.bed.split('/')[-1].replace('.bed','')
+
+open('%s%s.csv'%(out_prefix, input_file_name), 'w').write(out_table)
 
 
 
