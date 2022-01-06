@@ -21,7 +21,7 @@ if argv[0].find('/') >= 0:
 
 parser = argparse.ArgumentParser(description='SIMPA - Single-cell chIp-seq iMPutAtion')
 parser.add_argument('--bed', '-b', type=str, required=True, help='Path to bed file with sparse single-cell input')
-parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments 
+parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments
 					(ususally the one used in the scChIP). When multiple targets are provided, separate by "+"''')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
 parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38'], help='Genome assembly')
@@ -54,23 +54,24 @@ if rank == 0:
 	# initialize variables needed to read in the sparse single-cell input
 	# that is converted into a set (or list) of bins
 	allowed_chroms = utils.get_allowed_chrom_str()
-	chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s/sizes.tsv'%(simpa_dir, args.genome))
+	chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s.tsv'%(simpa_dir, args.genome))
 	peaks = pp.get_peaks(args.bed, allowed_chroms, enrich_index=-1)
-	sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms, 
+	sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms,
 															chrom_sizes, bin_size_int)
 	sc_bins = sorted(list(sc_bins))
 	print('\nGiven the sparse input there are %d genomic regions converted into %d bins of size %s'%(
 		sum([len(p) for p in peaks.values()]), len(sc_bins), args.binsize))
-	
+
 	# get reference experiments for given target(s)
 	metadata = pd.read_csv('%sdata/metadata_ENCODE.tsv'%(simpa_dir), sep='\t')
+	metadata = metadata.loc[metadata['assembly'] == args.genome]
 	metadata = metadata.loc[[True if target in target_set else False for target in metadata['target']]]
 	print('Number of available bulk reference experiments: %d (for %s)'%(metadata.shape[0],args.targets))
-	
+
 	if metadata.shape[0] == 0:
 		raise Exception('''The target specification causes an empty reference set
 			please check the selected target(s).''')
-	
+
 	# read in the reference experiments, already converted into bins
 	# collect also all bins that are observed in at least one reference experiment
 	all_ref_bins = set()
@@ -79,8 +80,8 @@ if rank == 0:
 		ref_experiment_bins = pickle.load(open(ENCODE_dir+accession, 'rb'))
 		all_ref_bins = all_ref_bins | ref_experiment_bins
 		ref_bins_map[accession] = ref_experiment_bins
-	
-	# calculate the frequencies: how often is a particular bin present across all the 
+
+	# calculate the frequencies: how often is a particular bin present across all the
 	# reference experiments
 	print('Number of bins with a signal in at least one bulk:', len(all_ref_bins))
 	freq_map = {}
@@ -88,26 +89,26 @@ if rank == 0:
 		freq = sum([True if bid in bin_set else False for bin_set in ref_bins_map.values()])
 		freq = float(freq) / float(metadata.shape[0])
 		freq_map[bid] = freq
-	
+
 	# number of bins within a reference set
 	ref_n_bins = [len(ref_bins_map[acc]) for acc in metadata['accession']]
-	
+
 	# define candidate bins that are potentially imputed
 	candidates = list(all_ref_bins - set(sc_bins))
 	candidates.sort()
 	if args.simulate:
 		candidates = candidates[:100]
 	candidates = np.array(candidates)
-	print('Number of candidate bins: %d%s'%(len(candidates), 
+	print('Number of candidate bins: %d%s'%(len(candidates),
 	   '' if not args.simulate else ' (simulation mode is on)'))
-	
+
 	# depending on the bins in the sparse input, create the training features matrix
 	training_features = np.zeros((metadata.shape[0], len(sc_bins)), dtype=np.int)
 	for index, accession in enumerate(metadata['accession']):
 		training_features[index] = np.array([1 if bid in ref_bins_map[accession] else 0 for bid in sc_bins])
 	training_features = np.array(training_features)
 	print('Shape of matrix for training features:', training_features.shape)
-	
+
 	# searching for bins with exactly the same values, for bins having the same
 	# column values, only one model is trained and applied for all these bins
 	bin_index_map = {}
@@ -123,12 +124,12 @@ if rank == 0:
 			index += 1
 		bin_index_map[bid] = key_index_map[key]
 	uniq_cand_labels = np.array(uniq_cand_labels)
-	
+
 	print('\n##### Pre-Processing is done ... #####\n')
 	print('Training %d models for %d candidate bins'%(uniq_cand_labels.shape[0], len(candidates)))
 	print('Random Forest is used with %d trees'%(args.estimators))
 	print('The task is shared by %d processors'%(size))
-	
+
 	# rank 0 shares the dimensions for other ranks used to initiate
 	# the matrices containing the training features and candidates
 	dimensions = (metadata.shape[0], len(sc_bins), uniq_cand_labels.shape[0])
@@ -139,7 +140,7 @@ if rank != 0:
 	training_features = np.empty((n_ref_exps,n_sc_bins), dtype=np.int)
 	uniq_cand_labels = np.empty((dim1_uniq_cand_labels, n_ref_exps), dtype=np.int)
 
-# rank 0 pre-processed the data, created the training features, and collected the 
+# rank 0 pre-processed the data, created the training features, and collected the
 # candidates. This data is now shared with other ranks by broadcast
 comm.Bcast(training_features, root=0)
 comm.Bcast(uniq_cand_labels, root=0)
@@ -195,11 +196,11 @@ if rank == 0:
 		prob = index_prob[bid_index]
 		bin_freq_prob.append((bid, freq_map.get(bid,-1.0), prob))
 	bin_freq_prob = sorted(bin_freq_prob, key=lambda x: x[-1], reverse=True)
-	
+
 	# add the single-cell bins to the results
 	sc_bins_freq_def = [(bid, freq_map.get(bid, 0.0), -1.0) for bid in sc_bins]
 	bin_freq_prob = sc_bins_freq_def + bin_freq_prob
-	
+
 	# create the SIMPA output table and the imputed bins bed file
 	impute_n = int(np.mean(ref_n_bins))
 	imputed_bed = ''
@@ -207,21 +208,21 @@ if rank == 0:
 	for n_bins_imp, (binID, frequency, imp_probability) in enumerate(bin_freq_prob):
 		if n_bins_imp <= impute_n:
 			imputed_bed += '%s\t%d\t%d\n'%(bin_bed_map[binID])
-		
+
 		extended_bed += str(binID) + '\t'
 		extended_bed += '%s\t%d\t%d\t'%(bin_bed_map[binID])
 		extended_bed += '%.5f\t%f\n'%(frequency, imp_probability)
-	
+
 	# preparing output files
 	out_prefix = args.outdir
 	out_prefix += '/' if out_prefix[-1] != '/' else ''
 	if not os.path.exists(out_prefix):
 		os.makedirs(out_prefix)
 	input_file_name = args.bed.split('/')[-1].replace('.bed','')
-	
+
 	open('%s%s_imputed.bed'%(out_prefix, input_file_name), 'w').write(imputed_bed)
 	open('%s%s_freq_prob.simpa'%(out_prefix, input_file_name), 'w').write(extended_bed)
-	
+
 	print('\n##### Writing output to "%s" #####\n'%(out_prefix))
 	print('Reference bulk experiments have in average %d bins'%(impute_n))
 	last_comment = ' (not really, because of "simulate")' if args.simulate else ''

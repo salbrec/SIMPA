@@ -19,7 +19,7 @@ simpa_dir = './'
 if argv[0].find('/') >= 0:
 	simpa_dir = argv[0][: - argv[0][::-1].find('/')]
 
-parser = argparse.ArgumentParser(description='InterSIMPA - INTERpretation of imputed probability of SIMPA')
+parser = argparse.ArgumentParser(description='InterSIMPA - INTERpretation for imputed probability of SIMPA')
 parser.add_argument('--bed', '-b', type=str, required=True, help='Path to bed file with sparse single-cell input')
 parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments
 					(ususally the one used in the scChIP). When multiple targets are provided, separate by "+"''')
@@ -53,7 +53,7 @@ key_index_map = None
 # initialize variables needed to read in the sparse single-cell input
 # that is converted into a set (or list) of bins
 allowed_chroms = utils.get_allowed_chrom_str(args.genome)
-chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s/sizes.tsv'%(simpa_dir, args.genome))
+chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s.tsv'%(simpa_dir, args.genome))
 peaks = pp.get_peaks(args.bed, allowed_chroms, enrich_index=-1)
 sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms,
 														chrom_sizes, bin_size_int)
