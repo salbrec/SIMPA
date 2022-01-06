@@ -67,6 +67,10 @@ if rank == 0:
 	metadata = metadata.loc[[True if target in target_set else False for target in metadata['target']]]
 	print('Number of available bulk reference experiments: %d (for %s)'%(metadata.shape[0],args.targets))
 	
+	if metadata.shape[0] == 0:
+		raise Exception('''The target specification causes an empty reference set
+			please check the selected target(s).''')
+	
 	# read in the reference experiments, already converted into bins
 	# collect also all bins that are observed in at least one reference experiment
 	all_ref_bins = set()

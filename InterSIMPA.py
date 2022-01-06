@@ -21,7 +21,7 @@ if argv[0].find('/') >= 0:
 
 parser = argparse.ArgumentParser(description='InterSIMPA - INTERpretation of imputed probability of SIMPA')
 parser.add_argument('--bed', '-b', type=str, required=True, help='Path to bed file with sparse single-cell input')
-parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments 
+parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments
 					(ususally the one used in the scChIP). When multiple targets are provided, separate by "+"''')
 parser.add_argument('--summit', '-s', type=str, required=True, help='Peak summit of target region to be investigated')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
@@ -52,10 +52,10 @@ key_index_map = None
 
 # initialize variables needed to read in the sparse single-cell input
 # that is converted into a set (or list) of bins
-allowed_chroms = utils.get_allowed_chrom_str()
+allowed_chroms = utils.get_allowed_chrom_str(args.genome)
 chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s/sizes.tsv'%(simpa_dir, args.genome))
 peaks = pp.get_peaks(args.bed, allowed_chroms, enrich_index=-1)
-sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms, 
+sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms,
 														chrom_sizes, bin_size_int)
 sc_bins = sorted(list(sc_bins))
 print('\nGiven the sparse input there are %d genomic regions converted into %d bins of size %s'%(
@@ -63,6 +63,7 @@ print('\nGiven the sparse input there are %d genomic regions converted into %d b
 
 # get reference experiments for given target(s)
 metadata = pd.read_csv('%sdata/metadata_ENCODE.tsv'%(simpa_dir), sep='\t')
+metadata = metadata.loc[metadata['assembly'] == args.genome]
 metadata = metadata.loc[[True if target in target_set else False for target in metadata['target']]]
 print('Number of available bulk reference experiments: %d (for %s)'%(metadata.shape[0],args.targets))
 
@@ -75,7 +76,7 @@ for accession in metadata['accession']:
 	all_ref_bins = all_ref_bins | ref_experiment_bins
 	ref_bins_map[accession] = ref_experiment_bins
 
-# calculate the frequencies: how often is a particular bin present across all the 
+# calculate the frequencies: how often is a particular bin present across all the
 # reference experiments
 #print('Number of bins with a signal in at least one bulk:', len(all_ref_bins))
 freq_map = {}
@@ -92,7 +93,7 @@ cand_start = int(args.summit.split(':')[1])
 cand_end = cand_start + 1
 
 cand_peak = {cand_chr:[(cand_chr, cand_start, cand_end, -1)]}
-cand_bins, cand_bin_value, max_bin_ID_2, bin_bed_map_2 = pp.bin_it(cand_peak, allowed_chroms, 
+cand_bins, cand_bin_value, max_bin_ID_2, bin_bed_map_2 = pp.bin_it(cand_peak, allowed_chroms,
 														chrom_sizes, bin_size_int)
 
 cand_bin = list(cand_bins)[0]
@@ -151,7 +152,7 @@ for gene_id in gene_info['geneID']:
 		continue
 	if np.isnan(gene_start[gene_id]) or np.isnan(gene_end[gene_id]):
 		continue
-	
+
 	tss = gene_start[gene_id] if gene_orient[gene_id] == 'plus' else gene_end[gene_id]
 	genes_pos[gene_chrom[gene_id]].append( (gene_id, int(gene_start[gene_id]), int(gene_end[gene_id]), tss) )
 
@@ -167,10 +168,10 @@ for bin_id, importance in sc_bin_importance:
 	bin_start = bin_bed_map[bin_id][1]
 	bin_end   = bin_bed_map[bin_id][2]
 	bin_mid   = int(np.mean( [bin_start, bin_end] ))
-	
+
 	next_gene = None
 	gene_body = False
-	
+
 	# first search for gene bodies that overlap the bin
 	for gene_id, start, end, tss in genes_pos[bin_chrom]:
 		if end > bin_start:
@@ -178,15 +179,15 @@ for bin_id, importance in sc_bin_importance:
 				next_gene = (gene_id, 0)
 				gene_body = True
 				break
-	
+
 	# if there is no overlapping gene body:
 	# annotate region by closest TSS
 	if next_gene == None:
 		genes_dist = [ (gene_id, min( abs(tss - bin_start), abs(tss - bin_end) )) for gene_id, start, end, tss in genes_pos[bin_chrom] ]
 		next_gene = sorted(genes_dist, key=lambda x: x[1])[0]
-	
+
 	next_gene_id, next_gene_dist = next_gene
-	
+
 	# get further information about the distance to the gene
 	tss = gene_start[next_gene_id] if gene_orient[next_gene_id] == 'plus' else gene_end[next_gene_id]
 	tts = gene_end[next_gene_id] if gene_orient[next_gene_id] == 'plus' else gene_start[next_gene_id]
@@ -195,9 +196,9 @@ for bin_id, importance in sc_bin_importance:
 	if gene_orient.get(next_gene_id,'???') == 'minus':
 		dist_tss *= -1
 		dist_tts *= -1
-	
+
 	row = [bin_id, '%.1f%s'%(importance,'%'), '%s:%d-%d'%(bin_bed_map[bin_id])]
-	row += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no', 
+	row += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no',
 		 str(dist_tts), gene_orient.get(next_gene_id,'???'), gene_descr.get(next_gene_id,'???')]
 	table.append(row)
 
