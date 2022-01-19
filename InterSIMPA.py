@@ -209,7 +209,7 @@ for bin_id, importance in sc_bin_importance:
 	full_table.append(frow)
 
 # display
-print_nice_table(display)
+#print_nice_table(display)
 print('')
 
 out_table = ''
