@@ -30,6 +30,7 @@ parser.add_argument('--binsize', '-bs', type=str, default='5kb', choices=['1kb',
 parser.add_argument('--estimators', '-e', type=int, default=1000, help='Number of trees in Random Forest')
 parser.add_argument('--importance', '-it', type=float, default=1.0, help='Threshold for the feature importance')
 
+parser.add_argument('--file', '-f', type=str, default=None, help='Save output into one file, path given here.')
 
 # parse and pre-process command line arguments
 args = parser.parse_args()
@@ -221,8 +222,17 @@ if not os.path.exists(out_prefix):
 	os.makedirs(out_prefix)
 input_file_name = args.bed.split('/')[-1].replace('.bed','')
 
-open('%s%s.csv'%(out_prefix, input_file_name), 'w').write(out_table)
+# TODO: from the following, see what should remain in the final version
+#open('%s%s.csv'%(out_prefix, input_file_name), 'w').write(out_table)
 
+# get output pickled into one file
+if args.file != None:
+	out_dict = {'freq':ref_frequency, 'proba':prob, 'present':bin_is_present}
+	print('\n%s\n'%(80*'#'))
+	df = pd.DataFrame(full_table[1:], columns = full_table[0])
+	print(df)
+	out_dict['importance'] = df
+	pickle.dump(out_dict,open(args.file, 'wb'))
 
 
 
