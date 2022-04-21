@@ -26,9 +26,11 @@ parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s
 parser.add_argument('--summit', '-s', type=str, required=True, help='Peak summit of target region to be investigated')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
 parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38','mm10'], help='Genome assembly')
-parser.add_argument('--binsize', '-bs', type=str, default='5kb', choices=['1kb','5kb','50kb'], help='Size of the bins (genomic regions)')
+parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of the bins (genomic regions). For example "5kb" or "500b"')
 parser.add_argument('--estimators', '-e', type=int, default=1000, help='Number of trees in Random Forest')
 parser.add_argument('--importance', '-it', type=float, default=1.0, help='Threshold for the feature importance')
+parser.add_argument('--tssdist', '-d', type=int, default=-1, help='Cutoff for maximum distance to TSS according to the region-gene annotation')
+parser.add_argument('--gene', '-gn', type=str, default=None, help='Name of the gene to be used within an optional STRING analysis')
 
 parser.add_argument('--file', '-f', type=str, default=None, help='Save output into one file, path given here.')
 
@@ -164,6 +166,8 @@ header = ['Bin ID','Importance','Genomic Region','Next Gene (NG)','Dist TSS',
 		  'Genebody','Dist TTS','NG Orientation','NG Description']
 display = [header]
 full_table = [ list(map(lambda h: h.replace(' ','_'), header)) ]
+gene_importance = {}
+
 for bin_id, importance in sc_bin_importance:
 	bin_chrom = bin_bed_map[bin_id][0]
 	bin_start = bin_bed_map[bin_id][1]
@@ -198,18 +202,26 @@ for bin_id, importance in sc_bin_importance:
 		dist_tss *= -1
 		dist_tts *= -1
 
-	row = [bin_id, '%.1f%s'%(importance,'%'), '%s:%d-%d'%(bin_bed_map[bin_id])]
-	row += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no',
-		 str(dist_tts), gene_orient.get(next_gene_id,'???'), gene_descr.get(next_gene_id,'???')]
-	if importance >= args.importance:
-		display.append(row)
 	frow = [str(bin_id), str(importance), '%s:%d-%d'%(bin_bed_map[bin_id])]
 	frow += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no',
 		 str(dist_tts), gene_orient.get(next_gene_id,'???'), gene_descr.get(next_gene_id,'???')]
 	full_table.append(frow)
 
+	if args.tssdist > 0:
+		if np.abs(dist_tss) > args.tssdist:
+			continue
+
+	if importance < args.importance:
+		continue
+
+	row = [bin_id, '%.1f%s'%(importance,'%'), '%s:%d-%d'%(bin_bed_map[bin_id])]
+	row += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no',
+		 str(dist_tts), gene_orient.get(next_gene_id,'???'), gene_descr.get(next_gene_id,'???')]
+	display.append(row)
+	gene_importance[gene_symbol[next_gene_id]] = importance
+
 # display
-#print_nice_table(display)
+print_nice_table(display)
 print('')
 
 out_table = ''
@@ -233,6 +245,39 @@ if args.file != None:
 	print(df)
 	out_dict['importance'] = df
 	pickle.dump(out_dict,open(args.file, 'wb'))
+
+if args.gene != None:
+	gene = args.gene
+	print('\nYou selected the gene "%s" for an additional analysis based on the STRING co-expression data ...\n'%(gene))
+	str_info_file = '%sdata/STRING/%s_info.tsv'%(simpa_dir, args.genome[:2])
+	str_info = pd.read_csv(str_info_file, sep='\t')
+	id_map = dict(zip(str_info['preferred_name'], str_info['protein_external_id']))
+	name_map = dict(zip(str_info['protein_external_id'], str_info['preferred_name']))
+	if not gene in id_map:
+		print('\tERROR: the given gene name (%s) could not be found within the STRING links.'%(gene))
+		lower_cases = dict( (gn.lower(),gn) for gn in str_info['preferred_name'] )
+		if gene.lower() in lower_cases:
+			print('\tDid you mean "%s"?'%(lower_cases[gene.lower()]))
+		sys.exit()
+	str_ID = id_map[gene]
+	links_file = '%sdata/STRING/%s.tsv'%(simpa_dir, args.genome[:2])
+	links = pd.read_csv(links_file, sep='\t')
+	links = links.loc[links['protein1'] == str_ID]
+
+	coexpr_map = dict(zip(links['protein2'], links['coexpression']))
+	sorted_genes = sorted(gene_importance.keys(), key=lambda x: gene_importance[x], reverse=True)
+	str_table = [['Link', 'InterSIMPA feature importance', 'STRING co-expression']]
+	for linked_gene in sorted_genes:
+		fi_str = '%.5f'%(gene_importance[linked_gene])
+		coexpr = '-'
+		strid = id_map.get(linked_gene,'noLink')
+		if strid in coexpr_map:
+			coexpr = '    %d'%(coexpr_map[strid])
+		str_table.append( [linked_gene, fi_str, coexpr] )
+	print_nice_table(str_table)
+
+
+
 
 
 
