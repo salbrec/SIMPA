@@ -214,7 +214,7 @@ for bin_id, importance in sc_bin_importance:
 	if importance < args.importance:
 		continue
 
-	row = [bin_id, '%.1f%s'%(importance,'%'), '%s:%d-%d'%(bin_bed_map[bin_id])]
+	row = [bin_id, '%.2f%s'%(importance,'%'), '%s:%d-%d'%(bin_bed_map[bin_id])]
 	row += [gene_symbol[next_gene_id], str(dist_tss), 'overlap' if gene_body else 'no',
 		 str(dist_tts), gene_orient.get(next_gene_id,'???'), gene_descr.get(next_gene_id,'???')]
 	display.append(row)
@@ -260,7 +260,7 @@ if args.gene != None:
 			print('\tDid you mean "%s"?'%(lower_cases[gene.lower()]))
 		sys.exit()
 	str_ID = id_map[gene]
-	links_file = '%sdata/STRING/%s.tsv'%(simpa_dir, args.genome[:2])
+	links_file = '%sdata/STRING/%s%s.tsv'%(simpa_dir, args.genome[:2], str_ID[-1])
 	links = pd.read_csv(links_file, sep='\t')
 	links = links.loc[links['protein1'] == str_ID]
 
@@ -268,7 +268,7 @@ if args.gene != None:
 	sorted_genes = sorted(gene_importance.keys(), key=lambda x: gene_importance[x], reverse=True)
 	str_table = [['Link', 'InterSIMPA feature importance', 'STRING co-expression']]
 	for linked_gene in sorted_genes:
-		fi_str = '%.5f'%(gene_importance[linked_gene])
+		fi_str = '%.2f%s'%(gene_importance[linked_gene],'%')
 		coexpr = '-'
 		strid = id_map.get(linked_gene,'noLink')
 		if strid in coexpr_map:
