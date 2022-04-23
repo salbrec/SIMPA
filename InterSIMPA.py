@@ -30,7 +30,7 @@ parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of t
 parser.add_argument('--estimators', '-e', type=int, default=1000, help='Number of trees in Random Forest')
 parser.add_argument('--importance', '-it', type=float, default=1.0, help='Threshold for the feature importance')
 parser.add_argument('--tssdist', '-d', type=int, default=-1, help='Cutoff for maximum distance to TSS according to the region-gene annotation')
-parser.add_argument('--gene', '-gn', type=str, default=None, help='Name of the gene to be used within an optional STRING analysis')
+parser.add_argument('--gene', '-gn', type=str, default=None, help='Name of the gene (Entrez symbol) to be used for an additional analysis based on the co-expression data from the STRING database')
 
 parser.add_argument('--file', '-f', type=str, default=None, help='Save output into one file, path given here.')
 
@@ -266,14 +266,16 @@ if args.gene != None:
 
 	coexpr_map = dict(zip(links['protein2'], links['coexpression']))
 	sorted_genes = sorted(gene_importance.keys(), key=lambda x: gene_importance[x], reverse=True)
-	str_table = [['Link', 'InterSIMPA feature importance', 'STRING co-expression']]
+	str_table = [['InterSIMPA Relation', 'Feature Importance', ' ', 'STRING Relation', 'Co-Expression']]
 	for linked_gene in sorted_genes:
 		fi_str = '%.2f%s'%(gene_importance[linked_gene],'%')
-		coexpr = '-'
+		str_rel = '-'
+		coexpr = ' '
 		strid = id_map.get(linked_gene,'noLink')
 		if strid in coexpr_map:
-			coexpr = '    %d'%(coexpr_map[strid])
-		str_table.append( [linked_gene, fi_str, coexpr] )
+			str_rel = '%s <-> %s'%(gene, linked_gene)
+			coexpr = '%d'%(coexpr_map[strid])
+		str_table.append( ['%s -> %s'%(linked_gene, gene), fi_str, ' ', str_rel, coexpr] )
 	print_nice_table(str_table)
 
 
