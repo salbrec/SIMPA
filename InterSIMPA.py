@@ -26,7 +26,7 @@ parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s
 parser.add_argument('--summit', '-s', type=str, required=True, help='Peak summit of target region to be investigated')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
 parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38','mm10'], help='Genome assembly')
-parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of the bins (genomic regions). For example "5kb" or "500b"')
+parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of the bins (genomic regions). For example "5kb" or "500bp"')
 parser.add_argument('--estimators', '-e', type=int, default=1000, help='Number of trees in Random Forest')
 parser.add_argument('--importance', '-it', type=float, default=1.0, help='Threshold for the feature importance')
 parser.add_argument('--tssdist', '-d', type=int, default=-1, help='Cutoff for maximum distance to TSS according to the region-gene annotation')

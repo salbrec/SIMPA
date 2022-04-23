@@ -12,6 +12,8 @@ import utils.utils as utils
 script_dir = './'
 if argv[0].find('/') >= 0:
 	script_dir = argv[0][: - argv[0][::-1].find('/')]
+beds_url = 'http://cbdm-01.zdv.uni-mainz.de/~stalbrec/simpaBEDs/'
+beds_dir = script_dir + 'data/ENCODE/bed/'
 
 parser = argparse.ArgumentParser(description='''Given the genome assembly name, the targets of interest and the resolution (binsize),
                                                 this script creates the bin files needed by SIMPA or InterSIMPA''')
@@ -33,9 +35,9 @@ metadata = metadata.loc[[True if target in target_set else False for target in m
 print('Number of available bulk reference experiments: %d (for %s)'%(metadata.shape[0],args.targets))
 
 allowed_chroms = utils.get_allowed_chrom_str(args.genome)
-chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s/sizes.tsv'%(script_dir, args.genome))
+chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s.tsv'%(script_dir, args.genome))
 
-bins_dir = './data/ENCODE/%s/%s/'%(args.genome, args.binsize)
+bins_dir = '%sdata/ENCODE/%s/%s/'%(script_dir, args.genome, args.binsize)
 if not os.path.exists(bins_dir):
     os.mkdir(bins_dir)
 
@@ -46,40 +48,23 @@ for index, row in metadata.iterrows():
 		print('The bins for %s already exist.'%(acc))
 		continue
 
-	bed_file = './data/ENCODE/%s/bed/%s.bed'%(args.genome, acc)
+	bed_file = '%s%s.bed'%(beds_dir, acc)
+	if not os.path.exists(bed_file):
+		url = '%s%s.bed'%(beds_url, acc)
+		wget = 'wget %s -P %s'%(url, beds_dir)
+		print('Downloading the bed file for %s ...'%(acc), end=' ')
+		os.system(sleep(10))
+		os.system(wget)
+
 	peaks = pp.get_peaks(bed_file, allowed_chroms, enrich_index=-1)
 	sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms,
 					chrom_sizes, bin_size_int)
-	print(index, acc, type(sc_bins), len(sc_bins))
+	print('preprocessing is done for %s!'%(acc))
 	pickle.dump(sc_bins, open(bins_file, 'wb'))
 
 
 
 
-'''
-
-allowed_chroms = utils.get_allowed_chrom_str()
-chrom_sizes = utils.get_chrom_sizes('%sdata/chromosome_sizes/%s/sizes.tsv'%(script_dir, args.genome))
-peaks = pp.get_peaks(args.bed, allowed_chroms, enrich_index=-1)
-sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms,
-                                                        chrom_sizes, bin_size_int)
-sc_bins = sorted(list(sc_bins))
-print('\nGiven the sparse input there are %d genomic regions converted into %d bins of size %s'%(
-    sum([len(p) for p in peaks.values()]), len(sc_bins), args.binsize))
 
 
-
-
-
-
-given:
-    assembly target binsize (1kb)
-
- create dir for bin size
-
- i also need the chromosome sizes...
-
- go for it...
-
-'''
 

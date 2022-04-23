@@ -25,7 +25,7 @@ parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s
 					(ususally the one used in the scChIP). When multiple targets are provided, separate by "+"''')
 parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
 parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38','mm10'], help='Genome assembly')
-parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of the bins (genomic regions). For example "5kb" or "500b"')
+parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of the bins (genomic regions). For example "5kb" or "500bp"')
 parser.add_argument('--estimators', '-e', type=int, default=100, help='Number of trees in Random Forest')
 parser.add_argument('--simulate', action='store_true', help='Impute only 100 bins for testing the software')
 
