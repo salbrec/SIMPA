@@ -51,15 +51,16 @@ for index, row in metadata.iterrows():
 	bed_file = '%s%s.bed'%(beds_dir, acc)
 	if not os.path.exists(bed_file):
 		url = '%s%s.bed'%(beds_url, acc)
-		wget = 'wget %s -P %s'%(url, beds_dir)
-		print('Downloading the bed file for %s ...'%(acc), end=' ')
-		os.system(sleep(10))
+		wget = 'wget %s -P %s -q'%(url, beds_dir)
+		print('Downloading the bed file for %s...'%(acc), end=' ')
+		stdout.flush()
+		os.system('sleep 7')
 		os.system(wget)
 
 	peaks = pp.get_peaks(bed_file, allowed_chroms, enrich_index=-1)
 	sc_bins, sc_bin_value, max_bin_ID, bin_bed_map = pp.bin_it(peaks, allowed_chroms,
 					chrom_sizes, bin_size_int)
-	print('preprocessing is done for %s!'%(acc))
+	print('Preprocessing is done for %s!'%(acc))
 	pickle.dump(sc_bins, open(bins_file, 'wb'))
 
 
