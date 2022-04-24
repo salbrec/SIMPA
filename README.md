@@ -54,8 +54,8 @@ python SIMPA.py --help
 The expected output looks like this:
 
 ```
-usage: SIMPA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR]
-                [--genome {hg38}] [--binsize {5kb,50kb}]
+usage: SIMPA.py [-h] --bed BED --targets TARGETS [--outdir OUTDIR] 
+                [--genome {hg38,mm10}] [--binsize BINSIZE] 
                 [--estimators ESTIMATORS] [--simulate]
 
 SIMPA - Single-cell chIp-seq iMPutAtion
@@ -64,19 +64,18 @@ optional arguments:
   -h, --help            show this help message and exit
   --bed BED, -b BED     Path to bed file with sparse single-cell input
   --targets TARGETS, -t TARGETS
-                        Target(s) defining the specific reference experiments
-                        (ususally the one used in the scChIP). When multiple
+                        Target(s) defining the specific reference experiments 
+                        (ususally the one used in the scChIP). When multiple 
                         targets are provided, separate by "+"
   --outdir OUTDIR, -o OUTDIR
                         Output directory. Default: "./"
-  --genome {hg38}, -g {hg38}
+  --genome {hg38,mm10}, -g {hg38,mm10}
                         Genome assembly
-  --binsize {5kb,50kb}, -bs {5kb,50kb}
-                        Size of the bins (genomic regions)
+  --binsize BINSIZE, -bs BINSIZE
+                        Size of the bins (genomic regions). For example "5kb" or "500bp"
   --estimators ESTIMATORS, -e ESTIMATORS
                         Number of trees in Random Forest
   --simulate            Impute only 100 bins for testing the software
-
 ```
 
 ## Running SIMPA
@@ -204,8 +203,61 @@ additional annotations regarding the next gene (if bin overlaps gene-body, Dista
 | 570912 | 1.0%       | chr22:30435000-30440000   | LOC105372990   | 4814     | overlap  | 999      | plus           | uncharacterized LOC105372990                        |
 +--------+------------+---------------------------+----------------+----------+----------+----------+----------------+-----------------------------------------------------+
 
+```
 
+## Additional parameters and options of InterSIMPA
 
+By default, InterSIMPA lists all genes annotated by the single-cell regions with the highest feature importance values, but without any restriction for the distance to the gene. The parameter `–tssdist` can be used to exclude annotations with a distance to the TSS larger than the given value. Furthermore, InterSIMPA is able to include co-expression data from the STRING database as it was done for one of the validation analyses in our preprint. This functionality can be used by providing the Entrez symbol (gene name) of a gene that is related to the genomic position of interest (summit). The summit in the example above describes the center of the promoter for the gene CD22, one of the genes involved in the B-cell receptor signaling pathway. In order to extend the output of InterSIMPA the gene name has to be provided using the parameter `--gene` as in the following example:
+
+```
+python InterSIMPA.py -b ./scExamples/H3K4me3_hg38_5kb/BC8791969_B-cell.bed -t H3K4me3 --summit chr19:35329500 --gene CD22
+```
+
+The additional output will look like this:
+
+```
+You selected the gene "CD22" for an additional analysis based on the STRING co-expression data ...
+
++----------------------+--------------------+---+-----------------+---------------+
+| InterSIMPA Relation  | Feature Importance |   | STRING Relation | Co-Expression |
++----------------------+--------------------+---+-----------------+---------------+
+| CD86 -> CD22         | 9.93%              |   | CD22 <-> CD86   | 119           |
+| FGD2 -> CD22         | 5.87%              |   | -               |               |
+| LOC105372093 -> CD22 | 4.73%              |   | -               |               |
+| TMEM268 -> CD22      | 4.42%              |   | -               |               |
+| DENND6B -> CD22      | 4.33%              |   | -               |               |
+| FGFR1OP -> CD22      | 4.26%              |   | -               |               |
+| TMEM131L -> CD22     | 3.75%              |   | -               |               |
+| CUL3 -> CD22         | 3.70%              |   | -               |               |
+| IRF2 -> CD22         | 3.50%              |   | -               |               |
+| CD52 -> CD22         | 3.42%              |   | CD22 <-> CD52   | 98            |
+| SLC37A1 -> CD22      | 2.79%              |   | -               |               |
+| RNU6-153P -> CD22    | 1.93%              |   | -               |               |
+| HIVEP1 -> CD22       | 1.86%              |   | -               |               |
+| UBQLN1 -> CD22       | 1.81%              |   | -               |               |
+| LOC102724877 -> CD22 | 1.72%              |   | -               |               |
+| LOC100289315 -> CD22 | 1.64%              |   | -               |               |
+| BFSP2 -> CD22        | 1.47%              |   | -               |               |
+| VOPP1 -> CD22        | 1.37%              |   | -               |               |
+| KLRK1 -> CD22        | 1.36%              |   | CD22 <-> KLRK1  | 54            |
+| ABI3 -> CD22         | 1.29%              |   | -               |               |
+| LOC105369771 -> CD22 | 1.23%              |   | -               |               |
+| SMAP2 -> CD22        | 1.16%              |   | -               |               |
+| ST14 -> CD22         | 1.07%              |   | -               |               |
+| PRDM15 -> CD22       | 1.06%              |   | -               |               |
+| LOC105372990 -> CD22 | 1.04%              |   | -               |               |
++----------------------+--------------------+---+-----------------+---------------+
+```
+
+For most of the genes there is no co-expression data from STRING as indicated by the '-'. However, for the three genes that have a co-expression value one can clearly see that the higher the InterSIMPA feature importance, the stronger the co-expression.
+Note that the corresponding STRING-based analysis in the preprint was done with hundreds of single-cell profiles which allows the collection of more genes for which both information are available, the InterSIMPA feature importance and the STRING co-expression. Accordingly, it was possible to compute correlation coefficients based on hundreds or even thousands of genes.
+
+## Preparing bulk reference data for certain target(s) in a desired resolution
+
+The script `prepareREFbins.py` implements the preprocessing for bulk reference experiments for any available target in a desired resolution. It can also be applied for several targets with one call when targets are separated by a '+'. The following example processes the reference experiments for H3K27ac and H3K9me3 in 2k resolution. Reference experiments are automatically downloaded as bed files and then preprocessed into bin sets. The resulting files are saved in a appropriate directory path and are then available for SIMPA or ItnerSIMPA.
+
+```
+python prepareREFbins.py -g hg38 -t H3K27ac+H3K9me3 -bs 2kb
 ```
 
 ### Runtime and MPI
