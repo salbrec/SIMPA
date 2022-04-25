@@ -24,15 +24,13 @@ parser.add_argument('--bed', '-b', type=str, required=True, help='Path to bed fi
 parser.add_argument('--targets', '-t', type=str, required=True, help='''Target(s) defining the specific reference experiments
 					(ususally the one used in the scChIP). When multiple targets are provided, separate by "+"''')
 parser.add_argument('--summit', '-s', type=str, required=True, help='Peak summit of target region to be investigated')
-parser.add_argument('--outdir', '-o', type=str, default='./', help='Output directory. Default: "./"')
 parser.add_argument('--genome', '-g', type=str, default='hg38', choices=['hg38','mm10'], help='Genome assembly')
 parser.add_argument('--binsize', '-bs', type=str, default='5kb', help='Size of the bins (genomic regions). For example "5kb" or "500bp"')
 parser.add_argument('--estimators', '-e', type=int, default=1000, help='Number of trees in Random Forest')
 parser.add_argument('--importance', '-it', type=float, default=1.0, help='Threshold for the feature importance')
 parser.add_argument('--tssdist', '-d', type=int, default=-1, help='Cutoff for maximum distance to TSS according to the region-gene annotation')
 parser.add_argument('--gene', '-gn', type=str, default=None, help='Name of the gene (Entrez symbol) to be used for an additional analysis based on the co-expression data from the STRING database')
-
-parser.add_argument('--file', '-f', type=str, default=None, help='Save output into one file, path given here.')
+parser.add_argument('--outfile', '-of', type=str, default=None, help='Save output into a tab-separated file, path given here')
 
 # parse and pre-process command line arguments
 args = parser.parse_args()
@@ -228,24 +226,6 @@ out_table = ''
 for row in full_table:
 	out_table += ','.join(map(str,row)) + '\n'
 
-out_prefix = args.outdir
-out_prefix += '/' if out_prefix[-1] != '/' else ''
-if not os.path.exists(out_prefix):
-	os.makedirs(out_prefix)
-input_file_name = args.bed.split('/')[-1].replace('.bed','')
-
-# TODO: from the following, see what should remain in the final version
-#open('%s%s.csv'%(out_prefix, input_file_name), 'w').write(out_table)
-
-# get output pickled into one file
-if args.file != None:
-	out_dict = {'freq':ref_frequency, 'proba':prob, 'present':bin_is_present}
-	print('\n%s\n'%(80*'#'))
-	df = pd.DataFrame(full_table[1:], columns = full_table[0])
-	print(df)
-	out_dict['importance'] = df
-	pickle.dump(out_dict,open(args.file, 'wb'))
-
 if args.gene != None:
 	gene = args.gene
 	print('\nYou selected the gene "%s" for an additional analysis based on the STRING co-expression data ...\n'%(gene))
@@ -279,6 +259,10 @@ if args.gene != None:
 	print_nice_table(str_table)
 
 
+# get output pickled into one file
+if args.outfile != None:
+	df = pd.DataFrame(full_table[1:], columns = full_table[0])
+	df.to_csv(args.outfile, sep='\t', index=False)
 
 
 
